@@ -2,8 +2,8 @@ version: 1
 services:
   - type: web
     name: mp3-player
-    env: node
-    buildCommand: npm install
-    startCommand: npm start
+    env: static
     plan: free
-    publishDir: .  # ルートディレクトリを指定
+    buildCommand: ""
+    startCommand: "serve ."
+    publishDir: ./
