@@ -1,6 +1,9 @@
+version: 1
 services:
   - type: web
-    name: continuous mp3 player
-    env: static
-    staticPublishPath: ./
-    buildCommand: ""
+    name: mp3-player
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    publishDir: ./
