@@ -1,9 +1,11 @@
 version: 1
 services:
-  - type: docker
-    name: my-static-site
-    env: docker
-    buildCommand: ""  # ビルドコマンドを指定
-    docker: 
-      dockerfile: Dockerfile
-      context: .
+  - type: web
+    name: my-web-service
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
