@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png"> <!-- アイコンを指定 -->
+    <title>MP3連続再生サイト</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;  /* 明るいグレーに設定 */
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0; /* マージンをリセット */
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #444; /* テキストの色を暗く */
+        }
+        /* ダークモードのサイト名のスタイル */
+        body.dark h1 {
+            color: #ffffff; /* ダークモードでのテキストの色 */
+        }
+        #darkModeToggle {
+            margin: 20px;
+            display: flex;
+            justify-content: center; /* 中央揃え */
+            align-items: center; /* 垂直方向の中央揃え */
+            cursor: pointer;
+        }
+        #darkModeToggle input {
+            display: none;
+        }
+        #darkModeToggle .toggle {
+            width: 50px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 50px;
+            position: relative;
+            transition: background 0.3s;
+        }
+        #darkModeToggle .toggle:after {
+            content: "";
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            left: 1px;
+            top: 1px;
+            transition: transform 0.3s;
+        }
+        #darkModeToggle input:checked + .toggle {
+            background: #4CAF50;
+        }
+        #darkModeToggle input:checked + .toggle:after {
+            transform: translateX(26px);
+        }
+        input[type="file"], button {
+            padding: 10px 15px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        input[type="file"]:hover, button:hover {
+            background-color: #e0e0e0;
+            border-color: #888;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #playlist {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        #playlist li {
+            padding: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        #playlist li:hover {
+            background-color: #f0f0f0;
+            border-color: #bbb;
+        }
+        #notice, #instructions {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #333;
+        }
+        body.dark {
+            background-color: #1a1a1a; /* ダークモードの背景色 */
+            color: #fff; /* ダークモードの文字色 */
+        }
+        body.dark #notice, body.dark #instructions {
+            background-color: #2a2a2a; /* ダークモードのコンテンツ背景 */
+            border-color: #444; /* ダークモードのボーダー色 */
+            color: #ddd; /* ダークモードの文字色 */
+        }
+        body.dark #playlist li {
+            background-color: #333; /* ダークモードのプレイリスト背景 */
+            border-color: #555; /* ダークモードのプレイリストボーダー */
+        }
+        body.dark #playlist li:hover {
+            background-color: #444; /* ダークモードのホバー背景 */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MP3連続再生サイト</h1>
+
+    <div id="darkModeToggle">
+        <label>
+            <input type="checkbox">
+            <div class="toggle"></div>
+        </label>
+        ダークモード
+    </div>
+    
+    <input type="file" id="fileInput" multiple accept="audio/mp3">
+    <div>
+        <label>
+            <input type="radio" name="mode" value="order" checked> 登録順
+        </label>
+        <label>
+            <input type="radio" name="mode" value="shuffle"> シャッフル
+        </label>
+    </div>
+
+    <ul id="playlist"></ul>
+
+    <div id="playControls">
+        <button id="playButton">再生</button>
+        <button id="stopButton">停止</button>
+        <button id="clearButton">クリア</button>
+    </div>
+    
+    <audio id="audioPlayer" controls style="margin-top: 20px;"></audio>
+
+    <div id="notice">
+        <h2>注意事項</h2>
+        <ul>
+            <li>選択されたMP3ファイルはローカルブラウザに保存されますが、ブラウザのデータがクリアされると消えてしまいます。</li>
+            <li>ファイルのアップロードには時間がかかる場合がありますので、しばらくお待ちください。</li>
+            <li>データの保存にはブラウザのストレージの制限があります。</li>
+        </ul>
+    </div>
+
+    <div id="instructions">
+        <h2>使い方</h2>
+        <ol>
+            <li>MP3ファイルを選択するために「ファイルを選択」ボタンをクリックします。</li>
+            <li>選択したファイルがプレイリストに表示されます。</li>
+            <li>プレイリストのファイル名をクリックすると再生が始まります。</li>
+            <li>ダークモードの切り替えができます。</li>
+            <li>「再生」ボタンで音声を再生し、「停止」ボタンで音声を停止できます。</li>
+            <li>「クリア」ボタンでプレイリストをクリアします。</li>
+        </ol>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playButton = document.getElementById('playButton');
+        const stopButton = document.getElementById('stopButton');
+        const clearButton = document.getElementById('clearButton');
+        const playlist = document.getElementById('playlist');
+        const darkModeToggle = document.querySelector('#darkModeToggle input');
+
+        let db;
+        const dbRequest = indexedDB.open('mp3Database', 1);
+
+        dbRequest.onupgradeneeded = function(event) {
+            db = event.target.result;
+            db.createObjectStore('mp3Files', {keyPath: 'id'});
+        };
+
+        dbRequest.onsuccess = function(event) {
+            db = event.target.result;
+            loadPlaylist();
+        };
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            const filePromises = Array.from(files).map((file, index) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const fileURL = e.target.result;
+                        saveFile({ id: index, name: file.name, url: fileURL });
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            Promise.all(filePromises).then(() => {
+                loadPlaylist();
+            });
+        });
+
+        function saveFile(fileData) {
+            const transaction = db.transaction(['mp3Files'], 'readwrite');
+            const store = transaction.objectStore('mp3Files');
+            store.put(fileData);
+        }
+
+        function loadPlaylist() {
+            const transaction = db.transaction(['mp3Files'], 'readonly');
+            const store = transaction.objectStore('mp3Files');
+            const request = store.getAll();
+
+            request.onsuccess = function(event) {
+                const files = event.target.result;
+                displayPlaylist(files);
+            };
+        }
+
+        function displayPlaylist(files) {
+            playlist.innerHTML = '';
+            files.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = file.name;
+                li.dataset.url = file.url;
+                li.addEventListener('click', () => {
+                    audioPlayer.src = file.url;
+                    audioPlayer.play();
+                });
+                playlist.appendChild(li);
+            });
+
+            if (files.length > 0) {
+                audioPlayer.src = files[0].url;
+            }
+        }
+
+        audioPlayer.addEventListener('ended', () => {
+            const nextLi = playlist.querySelector('li[data-url="' + audioPlayer.src + '"]');
+            const nextIndex = Array.from(playlist.children).indexOf(nextLi) + 1;
+            const nextLiToPlay = playlist.children[nextIndex] || playlist.children[0];
+            if (nextLiToPlay) {
+                audioPlayer.src = nextLiToPlay.dataset.url;
+                audioPlayer.play();
+            }
+        });
+
+        playButton.addEventListener('click', () => {
+            audioPlayer.play();
+        });
+
+        stopButton.addEventListener('click', () => {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+        });
+
+        clearButton.addEventListener('click', () => {
+            const transaction = db.transaction(['mp3Files'], 'readwrite');
+            const store = transaction.objectStore('mp3Files');
+            store.clear();
+            playlist.innerHTML = '';
+            audioPlayer.src = '';
+        });
+
+        darkModeToggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark');
+        });
+    </script>
+</body>
+</html>
