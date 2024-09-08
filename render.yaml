@@ -1,9 +1,8 @@
 version: 1
 services:
-  - type: file.server
-    name: my-static-files
+  - type: static
+    name: my-static-site
     env: static
     plan: free
-    buildCommand: ""  # ビルドコマンドが必要ない場合は空にします。
-    startCommand: ""  # file.serverタイプではこのフィールドは不要です。
-    publishDir: ./public  # 静的ファイルの格納場所を指定します。
+    buildCommand: ""           # ビルドコマンドが必要ない場合は空にします。
+    publishDir: ./public      # 静的ファイルの格納場所を指定します。
