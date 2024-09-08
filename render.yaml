@@ -1,8 +1,9 @@
 version: 1
 services:
-  - type: static
+  - type: docker
     name: my-static-site
-    env: static
-    plan: free
-    buildCommand: ""           # ビルドコマンドが必要ない場合は空にします。
-    publishDir: ./public      # 静的ファイルの格納場所を指定します。
+    env: docker
+    buildCommand: ""  # ビルドコマンドを指定
+    docker: 
+      dockerfile: Dockerfile
+      context: .
