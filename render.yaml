@@ -1,9 +1,9 @@
 version: 1
 services:
   - type: web
-    name: mp3-player
-    env: static
+    name: my-node-app
+    env: node
     plan: free
-    buildCommand: ""
-    startCommand: "serve ."
-    publishDir: ./
+    buildCommand: "npm install"  # Command to install dependencies
+    startCommand: "npm start"     # Command to start the application
+    publishDir: .                  # Use the root or specify a build directory
