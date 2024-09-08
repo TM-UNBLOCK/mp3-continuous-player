@@ -6,4 +6,4 @@ services:
     buildCommand: npm install
     startCommand: npm start
     plan: free
-    publishDir: ./
+    publishDir: .  # ルートディレクトリを指定
