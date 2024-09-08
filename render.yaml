@@ -1,8 +1,9 @@
 version: 1
 services:
-  - type: static
+  - type: web
     name: mp3-player
     env: static
     plan: free
     buildCommand: ""
-    publishDir: . # またはビルドされた静的ファイルのディレクトリのパスを指定
+    startCommand: "serve ."
+    publishDir: ./
