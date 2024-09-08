@@ -1,9 +1,9 @@
 version: 1
 services:
-  - type: web
-    name: my-node-app
-    env: node
+  - type: file.server
+    name: my-static-files
+    env: static
     plan: free
-    buildCommand: "npm install"  # Command to install dependencies
-    startCommand: "npm start"     # Command to start the application
-    publishDir: .                  # Use the root or specify a build directory
+    buildCommand: ""  # ビルドコマンドが必要ない場合は空にします。
+    startCommand: ""  # file.serverタイプではこのフィールドは不要です。
+    publishDir: ./public  # 静的ファイルの格納場所を指定します。
