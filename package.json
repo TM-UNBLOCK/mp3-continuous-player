@@ -1,0 +1,15 @@
+{
+  "name": "mp3-player",
+  "version": "1.0.0",
+  "description": "A simple MP3 player web app",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server"
+  },
+  "dependencies": {
+    "live-server": "^1.2.1"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
